@@ -18,10 +18,15 @@ app.post("/crear_preferencia", async (req, res) => {
       unit_price: Number(item.precio)
     }));
 
-    const preference = {
-      items,
-      auto_return: "approved"
-    };
+const preference = {
+  items,
+  auto_return: "approved",
+  back_urls: {
+    success: "https://riandigu.github.io/ferreteria-frontend/success.html",
+    failure: "https://riandigu.github.io/ferreteria-frontend/success.html",
+    pending: "https://riandigu.github.io/ferreteria-frontend/success.html"
+  }
+};
 
     const response = await mercadopago.preferences.create(preference);
 
@@ -33,4 +38,5 @@ app.post("/crear_preferencia", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => console.log("Servidor corriendo en puerto", PORT));
