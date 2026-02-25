@@ -4,19 +4,17 @@ const cors = require("cors");
 
 const app = express();
 
-// Middlewares
 app.use(cors());
 app.use(express.json());
 
-// Configuración de Mercado Pago
-// Asegúrate de crear en Render la variable de entorno: MP_ACCESS_TOKEN=TEST-2754761979785782-022420-fc4ff1c5e7e23432ff5bc4e9cfe1412d-5849844
+// Configura tu Access Token de Mercado Pago desde variable de entorno
 mercadopago.configurations.setAccessToken(process.env.MP_ACCESS_TOKEN);
 
-// Endpoint para crear la preferencia
+// Ruta para crear la preferencia
 app.post("/crear_preferencia", async (req, res) => {
   try {
     const items = req.body.items.map(item => ({
-      title: item.name,       // desde tu frontend
+      title: item.name,
       quantity: 1,
       currency_id: "CLP",
       unit_price: Number(item.price)
@@ -33,30 +31,27 @@ app.post("/crear_preferencia", async (req, res) => {
     };
 
     const response = await mercadopago.preferences.create(preference);
-    res.json({ init_point: response.body.init_point });
 
+    res.json({ init_point: response.body.init_point });
   } catch (error) {
     console.error("Error creando preferencia:", error);
-    res.status(500).json({ error: "Error al crear la preferencia" });
+    res.status(500).json({ error: "Error creando preferencia" });
   }
 });
 
-// Rutas de retorno de Mercado Pago
+// Rutas de prueba para redirección
 app.get("/success", (req, res) => {
-  res.send("<h1>Pago aprobado ✅</h1><p>Gracias por tu compra.</p>");
+  res.send("Pago aprobado ✅");
 });
 
 app.get("/failure", (req, res) => {
-  res.send("<h1>Pago fallido ❌</h1><p>Intenta nuevamente.</p>");
+  res.send("Pago fallido ❌");
 });
 
 app.get("/pending", (req, res) => {
-  res.send("<h1>Pago pendiente ⏳</h1><p>Estamos esperando la confirmación.</p>");
+  res.send("Pago pendiente ⏳");
 });
 
-// Puerto dinámico de Render
+// Render asigna puerto dinámico
 const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log("Servidor corriendo en puerto", PORT);
-});
+app.listen(PORT, () => console.log("Servidor corriendo en puerto", PORT));
